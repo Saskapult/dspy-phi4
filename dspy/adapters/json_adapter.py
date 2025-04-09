@@ -125,12 +125,20 @@ class JSONAdapter(ChatAdapter):
             fields = fields[1]
             print("is now")
             print(fields)
+        # Sometimes it returns a list of all of the tuples
+        if isinstance(fields, list) and len(fields) == 1 and isinstance(fields[0], list):
+            print("Fix fields (case 3)")
+            # Same as case 2
+            fields = { "relations": fields }
+            print("is now")
+            print(fields)
         # Sometimes it just returns a list of the relation tuples (happens in MINE test)
         if isinstance(fields, list) and len(fields) > 0 and isinstance(fields[0], str):
             print("Fix fields (case 2)")
             fields = { "relations": fields }
             print("is now")
             print(fields)
+       
 
         fields = {k: v for k, v in fields.items() if k in signature.output_fields}
 
