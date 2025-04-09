@@ -116,11 +116,45 @@ class JSONAdapter(ChatAdapter):
 
     def parse(self, signature: Type[Signature], completion: str) -> dict[str, Any]:
         fields = json_repair.loads(completion)
+
+        print("fields")
+        print(fields)
+        # Sometimes it retunrs a list with an empty string and then a proper dict
+        if isinstance(fields, list) and len(fields) == 2 and fields[0] == "":
+            print("Fix fields (case 1)")
+            fields = fields[1]
+            print("is now")
+            print(fields)
+        # Sometimes it just returns a list of the relation tuples (happens in MINE test)
+        elif isinstance(fields, list) and len(fields) > 0 and isinstance(fields[0], str):
+            print("Fix fields (case 2)")
+            fields = { "relations": fields }
+            print("is now")
+            print(fields)
+
         fields = {k: v for k, v in fields.items() if k in signature.output_fields}
 
         # Attempt to cast each value to type signature.output_fields[k].annotation.
         for k, v in fields.items():
             if k in signature.output_fields:
+
+                print(f"Parse (json) for field '{k}':")
+                print(type(v))
+                print(v)
+                # Sometimes a list of tuples of strings is retuned as a list of strings 
+                # This creates tuples from them 
+                if k == "relations" and isinstance(v, list) and len(v) > 0 and isinstance(v[0], str):
+                    print("Relations list detected")
+                    print("Collect by triples")
+                    # Sometimes it includes a trailing "This JSON object..." or whatever that the LLM 
+                    # puts after the json data itself 
+                    # This discards that (and hopefully nothing else)
+                    if (len(v) % 3) != 0:
+                        print(f"Discarding last {len(v)%3} values")
+                    print("is now")
+                    v = [(v[i*3+0], v[i*3+1], v[i*3+2]) for i in range(0, len(v)//3)]
+                    print(v)
+
                 fields[k] = parse_value(v, signature.output_fields[k].annotation)
 
         if fields.keys() != signature.output_fields.keys():
