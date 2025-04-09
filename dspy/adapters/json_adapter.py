@@ -126,7 +126,7 @@ class JSONAdapter(ChatAdapter):
             print("is now")
             print(fields)
         # Sometimes it just returns a list of the relation tuples (happens in MINE test)
-        elif isinstance(fields, list) and len(fields) > 0 and isinstance(fields[0], str):
+        if isinstance(fields, list) and len(fields) > 0 and isinstance(fields[0], str):
             print("Fix fields (case 2)")
             fields = { "relations": fields }
             print("is now")
