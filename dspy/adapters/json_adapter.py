@@ -128,8 +128,6 @@ class JSONAdapter(ChatAdapter):
         # Sometimes it returns a list of all of the tuples
         if isinstance(fields, list) and len(fields) > 0 and isinstance(fields[0], list):
             print("Fix fields (case 3)")
-            # And can include non-triples 
-            fields = [f for f in fields if len(f) == 3]
             # Same as case 2
             fields = { "relations": fields }
             print("is now")
@@ -164,6 +162,9 @@ class JSONAdapter(ChatAdapter):
                     print("is now")
                     v = [(v[i*3+0], v[i*3+1], v[i*3+2]) for i in range(0, len(v)//3)]
                     print(v)
+                
+                # And sometimes we get non-triples
+                v = [val for val in v if len(val) == 3]
 
                 fields[k] = parse_value(v, signature.output_fields[k].annotation)
 
