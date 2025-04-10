@@ -149,22 +149,24 @@ class JSONAdapter(ChatAdapter):
                 print(f"Parse (json) for field '{k}':")
                 print(type(v))
                 print(v)
-                # Sometimes a list of tuples of strings is retuned as a list of strings 
-                # This creates tuples from them 
-                if k == "relations" and isinstance(v, list) and len(v) > 0 and isinstance(v[0], str):
-                    print("Relations list detected")
-                    print("Collect by triples")
-                    # Sometimes it includes a trailing "This JSON object..." or whatever that the LLM 
-                    # puts after the json data itself 
-                    # This discards that (and hopefully nothing else)
-                    if (len(v) % 3) != 0:
-                        print(f"Discarding last {len(v)%3} values")
-                    print("is now")
-                    v = [(v[i*3+0], v[i*3+1], v[i*3+2]) for i in range(0, len(v)//3)]
-                    print(v)
                 
-                # And sometimes we get non-triples
-                v = [val for val in v if len(val) == 3]
+                if k == "relations":
+                    # Sometimes a list of tuples of strings is retuned as a list of strings 
+                    # This creates tuples from them 
+                    if isinstance(v, list) and len(v) > 0 and isinstance(v[0], str):
+                        print("Relations list detected")
+                        print("Collect by triples")
+                        # Sometimes it includes a trailing "This JSON object..." or whatever that the LLM 
+                        # puts after the json data itself 
+                        # This discards that (and hopefully nothing else)
+                        if (len(v) % 3) != 0:
+                            print(f"Discarding last {len(v)%3} values")
+                        print("is now")
+                        v = [(v[i*3+0], v[i*3+1], v[i*3+2]) for i in range(0, len(v)//3)]
+                        print(v)
+                    
+                    # And sometimes we get non-triples
+                    v = [val for val in v if len(val) == 3]                
 
                 fields[k] = parse_value(v, signature.output_fields[k].annotation)
 
