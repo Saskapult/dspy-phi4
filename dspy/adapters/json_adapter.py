@@ -119,7 +119,13 @@ class JSONAdapter(ChatAdapter):
 
         print("fields")
         print(fields)
-        # Sometimes it retunrs a list with an empty string and then a proper dict
+
+        # Sometimes it returns nothing 
+        if fields == "":
+            print("Fix fields (case 4)")
+            fields = []
+            fields = { "relations": fields }
+        # Sometimes it returns a list with an empty string and then a proper dict
         if isinstance(fields, list) and len(fields) == 2 and fields[0] == "":
             print("Fix fields (case 1)")
             fields = fields[1]
