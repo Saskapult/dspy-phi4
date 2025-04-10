@@ -126,7 +126,7 @@ class JSONAdapter(ChatAdapter):
             print("is now")
             print(fields)
         # Sometimes it returns a list of all of the tuples
-        if isinstance(fields, list) and len(fields) == 1 and isinstance(fields[0], list):
+        if isinstance(fields, list) and len(fields) > 0 and isinstance(fields[0], list):
             print("Fix fields (case 3)")
             # Same as case 2
             fields = { "relations": fields }
