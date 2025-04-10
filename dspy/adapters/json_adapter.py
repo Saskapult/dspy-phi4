@@ -157,6 +157,16 @@ class JSONAdapter(ChatAdapter):
                 print(v)
                 
                 if k == "relations":
+
+                    # Sometimes it misses a bracket and the last tuple contains another list
+                    # This fix does cause the fix after it to always trigger, but whatever
+                    # https://stackoverflow.com/questions/73014753/how-to-make-a-flat-list-from-nested-lists
+                    def flatten(arg):
+                        if not isinstance(arg, list):
+                            return [arg]
+                        return [x for sub in arg for x in flatten(sub)]
+                    v = flatten(v)
+
                     # Sometimes a list of tuples of strings is retuned as a list of strings 
                     # This creates tuples from them 
                     if isinstance(v, list) and len(v) > 0 and isinstance(v[0], str):
@@ -170,9 +180,9 @@ class JSONAdapter(ChatAdapter):
                         print("is now")
                         v = [(v[i*3+0], v[i*3+1], v[i*3+2]) for i in range(0, len(v)//3)]
                         print(v)
-                    
+
                     # And sometimes we get non-triples
-                    v = [val for val in v if len(val) == 3]                
+                    v = [val for val in v if len(val) == 3] # and isinstance(val, tuple[str, str, str])                
 
                 fields[k] = parse_value(v, signature.output_fields[k].annotation)
 
