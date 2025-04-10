@@ -167,6 +167,7 @@ class ChatAdapter(Adapter):
             if (k not in fields) and (k in signature.output_fields):
 
                 print(f"Parse (chat) for field '{k}':")
+                print(type(v))
                 print(v)
                 # Phi 4 likes to use round brackets instead of square ones when retuning tuple data
                 # Dspy hates this
