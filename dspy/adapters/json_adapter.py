@@ -128,6 +128,8 @@ class JSONAdapter(ChatAdapter):
         # Sometimes it returns a list of all of the tuples
         if isinstance(fields, list) and len(fields) > 0 and isinstance(fields[0], list):
             print("Fix fields (case 3)")
+            # And can include non-triples 
+            fields = [f for f in fields if len(f) == 3]
             # Same as case 2
             fields = { "relations": fields }
             print("is now")
