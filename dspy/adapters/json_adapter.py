@@ -117,33 +117,33 @@ class JSONAdapter(ChatAdapter):
     def parse(self, signature: Type[Signature], completion: str) -> dict[str, Any]:
         fields = json_repair.loads(completion)
 
-        print("fields")
-        print(fields)
+        # print("fields")
+        # print(fields)
 
         # Sometimes it returns nothing 
         if fields == "":
-            print("Fix fields (case 4)")
+            # print("Fix fields (case 4)")
             fields = []
             fields = { "relations": fields }
         # Sometimes it returns a list with an empty string and then a proper dict
         if isinstance(fields, list) and len(fields) == 2 and fields[0] == "":
-            print("Fix fields (case 1)")
+            # print("Fix fields (case 1)")
             fields = fields[1]
-            print("is now")
-            print(fields)
+            # print("is now")
+            # print(fields)
         # Sometimes it returns a list of all of the tuples
         if isinstance(fields, list) and len(fields) > 0 and isinstance(fields[0], list):
-            print("Fix fields (case 3)")
+            # print("Fix fields (case 3)")
             # Same as case 2
             fields = { "relations": fields }
-            print("is now")
-            print(fields)
+            # print("is now")
+            # print(fields)
         # Sometimes it just returns a list of the relation tuples (happens in MINE test)
         if isinstance(fields, list) and len(fields) > 0 and isinstance(fields[0], str):
-            print("Fix fields (case 2)")
+            # print("Fix fields (case 2)")
             fields = { "relations": fields }
-            print("is now")
-            print(fields)
+            # print("is now")
+            # print(fields)
        
 
         fields = {k: v for k, v in fields.items() if k in signature.output_fields}
@@ -152,9 +152,9 @@ class JSONAdapter(ChatAdapter):
         for k, v in fields.items():
             if k in signature.output_fields:
 
-                print(f"Parse (json) for field '{k}':")
-                print(type(v))
-                print(v)
+                # print(f"Parse (json) for field '{k}':")
+                # print(type(v))
+                # print(v)
                 
                 if k == "relations":
 
@@ -170,16 +170,16 @@ class JSONAdapter(ChatAdapter):
                     # Sometimes a list of tuples of strings is retuned as a list of strings 
                     # This creates tuples from them 
                     if isinstance(v, list) and len(v) > 0 and isinstance(v[0], str):
-                        print("Relations list detected")
-                        print("Collect by triples")
+                        # print("Relations list detected")
+                        # print("Collect by triples")
                         # Sometimes it includes a trailing "This JSON object..." or whatever that the LLM 
                         # puts after the json data itself 
                         # This discards that (and hopefully nothing else)
-                        if (len(v) % 3) != 0:
-                            print(f"Discarding last {len(v)%3} values")
-                        print("is now")
+                        # if (len(v) % 3) != 0:
+                        #     print(f"Discarding last {len(v)%3} values")
+                        # print("is now")
                         v = [(v[i*3+0], v[i*3+1], v[i*3+2]) for i in range(0, len(v)//3)]
-                        print(v)
+                        # print(v)
 
                     # And sometimes we get non-triples
                     v = [val for val in v if len(val) == 3] # and isinstance(val, tuple[str, str, str])                

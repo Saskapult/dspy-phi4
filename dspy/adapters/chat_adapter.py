@@ -166,19 +166,19 @@ class ChatAdapter(Adapter):
         for k, v in sections:
             if (k not in fields) and (k in signature.output_fields):
 
-                print(f"Parse (chat) for field '{k}':")
-                print(type(v))
-                print(v)
+                # print(f"Parse (chat) for field '{k}':")
+                # print(type(v))
+                # print(v)
                 # Phi 4 likes to use round brackets instead of square ones when retuning tuple data
                 # Dspy hates this
                 # This simply replaces the tuple round brackets with square ones 
                 if k == "relations":
-                    print("Apply bracket fix (chat)")
-                    print(v)
-                    print("is now")
+                    # print("Apply bracket fix (chat)")
+                    # print(v)
+                    # print("is now")
                     import regex as re
                     v = re.sub(r'\((".*", ".*", ".*")\)', "[\\1]", v)
-                    print(v)
+                    # print(v)
 
                 try:
                     fields[k] = parse_value(v, signature.output_fields[k].annotation)
